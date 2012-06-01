@@ -1,0 +1,13 @@
+frames 100
+basename orb
+push
+move 250 250 0
+rotate y 360 knobby
+rotate x 360 k2
+scale 2 2 2 bigenator
+sphere 0 0 0 150
+vary knobby 0 99 1 0
+vary k2 0 99 0 1
+vary bigenator 0 49 0 1
+vary bigenator 50 99 1 0
+
