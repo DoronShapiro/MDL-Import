@@ -18,6 +18,10 @@ struct command
   int opcode;
   union
   {
+  	struct {
+  	  SYMTAB *p;
+  	  char file[256];
+  	} import;
     struct {
       SYMTAB *p;
       double c[4];

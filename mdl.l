@@ -56,6 +56,8 @@ strcpy(yylval.string, yytext); return SHADING_TYPE;}
 "display" {return DISPLAY;}
 "web" {return WEB;}
 
+"import" {return IMPORT;}
+
 ":" {return CO;}
 
 [a-zA-Z][\.a-zA-Z0-9_]* {
