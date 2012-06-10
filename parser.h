@@ -20,7 +20,7 @@ struct command
   {
   	struct {
   	  SYMTAB *p;
-  	  char file[256];
+  	  char filename[256];
   	} import;
     struct {
       SYMTAB *p;

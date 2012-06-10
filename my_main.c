@@ -357,7 +357,7 @@ void my_main(int polygons) {
             switch (op[i].opcode) {
 
 				case IMPORT:
-					printf("we're importing %s into %s!\n",op[i].op.import.file,op[i].op.import.p->name);
+					printf("we're importing %s into %s!\n",op[i].op.import.filename,op[i].op.import.p->name);
 					break;
                 case SET:
                     set_value(lookup_symbol(op[i].op.set.p->name),
