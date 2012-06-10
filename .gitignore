@@ -1,1 +1,7 @@
 .DS_Store*
+nbproject/*
+*.o
+lex.yy.c
+mdl
+mdl.dSYM/*
+y.tab.*
