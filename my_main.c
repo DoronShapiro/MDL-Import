@@ -356,9 +356,13 @@ void my_main(int polygons) {
 
             switch (op[i].opcode) {
 
-				case IMPORT:
-					printf("we're importing %s into %s!\n",op[i].op.import.filename,op[i].op.import.p->name);
-					break;
+		case IMPORT:
+                    printf("we're importing %s!\n",op[i].op.import.filename);
+                    import_mesh(tmp, op[i].op.import.filename);
+                    matrix_mult(s->data[ s->top ], tmp);
+                    draw_polygons(tmp, t, g);
+                    tmp->lastcol = 0;
+		    break;
                 case SET:
                     set_value(lookup_symbol(op[i].op.set.p->name),
                             op[i].op.set.p->s.value);

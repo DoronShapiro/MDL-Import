@@ -567,12 +567,12 @@ MESH STRING CO STRING STRING
   op[lastop].op.mesh.cs = add_symbol($5,SYM_MATRIX,m);
   lastop++;
 } |
-IMPORT STRING STRING
+IMPORT STRING
 {
   lineno++;
   op[lastop].opcode = IMPORT;
   strncpy(op[lastop].op.import.filename, $2, 255);
-  op[lastop].op.import.p = add_symbol($3, SYM_FILE, 0);
+  //op[lastop].op.import.p = add_symbol($3, SYM_FILE, 0);
   lastop++;
 } |
 SET STRING DOUBLE
