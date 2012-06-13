@@ -357,7 +357,6 @@ void my_main(int polygons) {
             switch (op[i].opcode) {
 
 		case IMPORT:
-                    printf("we're importing %s!\n",op[i].op.import.filename);
                     import_mesh(tmp, op[i].op.import.filename);
                     matrix_mult(s->data[ s->top ], tmp);
                     draw_polygons(tmp, t, g);

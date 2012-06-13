@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <errno.h>
 
 #include "ml6.h"
 #include "display.h"
@@ -1014,14 +1015,17 @@ void draw_line(int x0, int y0, int x1, int y1, screen s, color c) {
 
 void import_mesh(struct matrix * points, char* filename){
     FILE * f;
-    //printf("the file extension is %s\n",&(filename[strlen(filename)-4]));
-    if(!strcmp(&(filename[strlen(filename)-4]), ".obj")){
+    
+    if(!strcmp(&(filename[strlen(filename)-4]), ".obj") || !strcmp(&(filename[strlen(filename)-4]), ".OBJ")){
         printf("its an obj\n");
         f = fopen(filename, "r");
-        import_mesh_obj(points, f);
-        fclose(f);
-        
+        if(f == NULL)
+            printf("Error opening %s: %s\n",filename, strerror(errno));
+        else{
+            import_mesh_obj(points, f);
+            fclose(f);
+        }
     }
     else
-        printf("Error: unrecognized filename in %s\n",filename);
+        printf("Error opening %s: unrecognized filetype\n",filename);
 }

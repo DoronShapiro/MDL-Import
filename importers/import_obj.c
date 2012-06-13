@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "import_obj.h"
+#include "../my_string.h"
 
 int getNumVerts(FILE * f){
     int ans;
@@ -20,13 +21,11 @@ void import_mesh_obj(struct matrix * points, FILE * f) {
     char c, *line, *savedLine;
     int numVerts, current, i, j;
     double **vertIndex, pts[3][3];
-  
-                    int k;
     
     line = (char*)malloc(256*sizeof(char));
     savedLine = line;
     numVerts = getNumVerts(f);
-    printf("there are %d lines of verts\n",numVerts);
+    //printf("there are %d lines of verts\n",numVerts);
     vertIndex = (double**)malloc(numVerts * sizeof(double*));
     for(i = 0; i < numVerts; i++)
         vertIndex[i] = (double*)malloc(3 * sizeof(double));
@@ -34,10 +33,11 @@ void import_mesh_obj(struct matrix * points, FILE * f) {
     current = 0;
     
     while (fgets(line, 255, f) != NULL) {
-        line[strlen(line) - 1] = '\0';
+       // line[strlen(line) - 1] = '\0';
+        strip_trailing_whitespace(line);
         c = line[0];
         
-        printf("the line is %s\n",line);
+        //printf("the line is %s\n",line);
         switch(c) {
             case 'v':
                 strsep(&line," ");
@@ -45,22 +45,10 @@ void import_mesh_obj(struct matrix * points, FILE * f) {
                 vertIndex[current][0] = atof(strsep(&line," "));
                 vertIndex[current][1] = atof(strsep(&line," "));
                 vertIndex[current][2] = atof(strsep(&line," "));
-                printf("\tPut %lf in v[%d][0], %lf in v[c][1], and %lf in v[c][2]\n",vertIndex[current][0],current,vertIndex[current][1],vertIndex[current][2]);
+                //printf("\tPut %lf in v[%d][0], %lf in v[c][1], and %lf in v[c][2]\n",vertIndex[current][0],current,vertIndex[current][1],vertIndex[current][2]);
                 current++;
                 break;
             case 'f':
-/*
-                printf("begin\n");
-
-                for(j=0;j<numVerts;j++){
-                    for(k=0;k<3;k++){
-                        printf("\t%lf",vertIndex[j][k]);
-                    }
-                    printf("\n");
-                }
-
-                printf("done\n");
-*/
                 strsep(&line," ");
                 for(j = 0; j < 3; j++){
                     i = atoi(strsep(&line," ")) - 1;
