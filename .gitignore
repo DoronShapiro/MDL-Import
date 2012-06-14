@@ -5,4 +5,6 @@ lex.yy.c
 mdl
 mdl.dSYM/*
 y.tab.*
-animations/*.png
+*.png
+tags
+.*.swp
