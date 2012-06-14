@@ -382,23 +382,6 @@ void draw_polygons( struct matrix *points, screen s, color c ) {
             x_b = y1 > y2 ? (y1 > y3 ? x1 : x3) : (y2 > y3 ? x2 : x3);
             x_t = y1 > y2 ? (y2 > y3 ? x3 : x2) : (y1 > y3 ? x3 : x1);
             x_m = y1 > y2 ? (y2 > y3 ? x2 : (y1 > y3 ? x3:x1)):(y1 > y3 ? x1 : (y2 > y3 ? x3 : x2));
-
-            if (y_t == y_m) {
-                double m_topToMid, m_topToBottom, m_midToBottom;
-                double xleft, xright, k;
-                int  yy;
-                xleft = xright = x_t;
-                m_topToMid = (x_t - x_m) / (y_t - y_m);
-                    m_topToBottom = (x_t - x_m) / (y_t - y_b);
-                m_midToBottom = (x_m - x_b) / (y_m - y_b);
-                for (yy = y_b; yy > y_m; yy--) {
-                    draw_line((int)xleft, yy, (int)xright, yy, s, c);
-                    printf("(int)xleft is %d\tyyis%d\t (int)xright is %d\n", (int)xleft, yy, (int)xright);
-                    xleft -= m_midToBottom;
-                    xright -= m_topToBottom;
-                }
-            }
-            else {
                 double m_topToMid, m_topToBottom, m_midToBottom;
                 double xleft, xright, k;
                 int  yy;
@@ -407,15 +390,20 @@ void draw_polygons( struct matrix *points, screen s, color c ) {
                 m_topToMid = (x_t - x_m) / (y_t - y_m);
                 m_topToBottom = (x_t - x_m) / (y_t - y_b);
                 m_midToBottom = (x_t - x_m) / (y_m - y_b);
+                yy = y_t;
 
-                printf("excute me? yy = %f\ty_m=%f\n", y_t, y_m);
-                for (yy = y_t; yy < y_m; yy++) {
-                    draw_line((int)xleft, yy, (int)xright, yy, s, c);
-                    printf("(int)xleft is %d\tyyis%d\t (int)xright is %d\n", (int)xleft, yy, (int)xright);
+                while (yy < y_m) {
+                    draw_line(xleft, yy, xright, yy, s, c);
                     xleft += m_topToMid;
                     xright += m_topToBottom;
+                    yy++;
                 }
-            }
+                while (yy < y_b) {
+                    draw_line(xleft, yy, xright, yy, s, c);
+                    xleft += m_midToBottom;
+                    xright += m_topToBottom;
+                    yy++;
+                }
         }
 
     }
