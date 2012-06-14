@@ -350,8 +350,8 @@ void draw_polygons( struct matrix *points, screen s, color c ) {
     for( i=0; i < points->lastcol - 2; i+=3 ) {
 
         if ( calculate_dot( points, i ) >= 0 ) {
+                 c = change_color( n++ );
 
-            //      c = change_color( n++ );
 
             draw_line( points->m[0][ i ],
                     points->m[1][ i ],
@@ -368,19 +368,67 @@ void draw_polygons( struct matrix *points, screen s, color c ) {
                     points->m[0][ i ],
                     points->m[1][ i ],
                     s, c );
-            /*Ax = points->m[0][i];*/
-            /*Ay = points->m[1][i];*/
-            /*Bx = points->m[0][i+1];*/
-            /*By = points->m[1][i+1];*/
-            /*Cx = points->m[0][i+2];*/
-            /*Cy = points->m[1][i+2];*/
-
-            y_t = y1 > y2 ? (y1 > y3 ? y1 : y3) : 
-                            (y2 > y3 ? y2 : y3);
-
-            y_b = y1 > y2 ? (y2 > y3 ? y3 : y2) : (y1 > y3 ? y3 : y1);
-
+            x1 = points->m[0][i];
+            y1 = points->m[1][i];
+            x2 = points->m[0][i+1];
+            y2 = points->m[1][i+1];
+            x3 = points->m[0][i+2];
+            y3 = points->m[1][i+2];
+            y_b = y1 > y2 ? (y1 > y3 ? y1 : y3) : (y2 > y3 ? y2 : y3);
+            y_t = y1 > y2 ? (y2 > y3 ? y3 : y2) : (y1 > y3 ? y3 : y1);
             y_m = y1 > y2 ? (y2 > y3 ? y2 : (y1 > y3 ? y3:y1)):(y1 > y3 ? y1 : (y2 > y3 ? y3 : y2));
+            printf("YT %d\tYB%d\tYM%d\n", y_t, y_b, y_m);
+
+            x_b = y1 > y2 ? (y1 > y3 ? x1 : x3) : (y2 > y3 ? x2 : x3);
+            x_t = y1 > y2 ? (y2 > y3 ? x3 : x2) : (y1 > y3 ? x3 : x1);
+            x_m = y1 > y2 ? (y2 > y3 ? x2 : (y1 > y3 ? x3:x1)):(y1 > y3 ? x1 : (y2 > y3 ? x3 : x2));
+
+            if (y_t == y_m) {
+                double m_topToMid, m_topToBottom, m_midToBottom;
+                double xleft, xright, k;
+                int  yy;
+                xleft = xright = x_t;
+                if (y_t - y_m == 0) {
+                    m_topToMid = 0;
+                    m_topToBottom = 0;
+                    m_midToBottom = 0;
+                    printf("divide by zero\n");
+                }
+                /*m_topToMid = (x_t - x_m) / (y_t - y_m);*/
+                m_topToBottom = (x_t - x_b) / (y_t - y_b);
+                m_midToBottom = (x_m - x_b) / (y_m - y_b);
+                for (yy = y_b; yy > y_m; yy--) {
+                    draw_line((int)xleft, yy, (int)xright, yy, s, c);
+                    printf("(int)xleft is %d\tyyis%d\t (int)xright is %d\n", (int)xleft, yy, (int)xright);
+                    xleft -= m_midToBottom;
+                    xright -= m_topToBottom;
+                }
+            }
+            else {
+                double m_topToMid, m_topToBottom, m_midToBottom;
+                double xleft, xright, k;
+                int  yy;
+                xleft = xright = x_t;
+                if (y_t - y_m == 0) {
+                    m_topToMid = 0;
+                    printf("asdgasdbasdb\n");
+                }
+                m_topToMid = (x_t - x_m) / (y_t - y_m);
+                m_topToBottom = (x_t - x_m) / (y_t - y_b);
+                if (y_m == y_b) {
+                    m_midToBottom = 0;
+                }
+                else {
+                    m_midToBottom = (x_t - x_m) / (y_m - y_b);
+                }
+                printf("excute me? yy = %d\ty_m=%d\n", y_t, y_m);
+                for (yy = y_t; yy < y_m; yy++) {
+                    draw_line((int)xleft, yy, (int)xright, yy, s, c);
+                    printf("(int)xleft is %d\tyyis%d\t (int)xright is %d\n", (int)xleft, yy, (int)xright);
+                    xleft += m_topToMid;
+                    xright += m_topToBottom;
+                }
+            }
         }
 
     }
