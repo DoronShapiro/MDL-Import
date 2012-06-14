@@ -463,12 +463,12 @@ void draw_filled_polygons( struct matrix *points, screen s, color c ) {
             x3 = points->m[0][i+2];
             y3 = points->m[1][i+2];
 
-            y_t = y1 > y2 ? (y1 > y3 ? y1 : y3) : (y2 > y3 ? y2 : y3);
-            y_b = y1 > y2 ? (y2 > y3 ? y3 : y2) : (y1 > y3 ? y3 : y1);
+            y_b = y1 > y2 ? (y1 > y3 ? y1 : y3) : (y2 > y3 ? y2 : y3);
+            y_t = y1 > y2 ? (y2 > y3 ? y3 : y2) : (y1 > y3 ? y3 : y1);
             y_m = y1 > y2 ? (y2 > y3 ? y2 : (y1 > y3 ? y3:y1)):(y1 > y3 ? y1 : (y2 > y3 ? y3 : y2));
 
-            x_t = y1 > y2 ? (y1 > y3 ? x1 : x3) : (y2 > y3 ? x2 : x3);
-            x_b = y1 > y2 ? (y2 > y3 ? x3 : x2) : (y1 > y3 ? x3 : x1);
+            x_b = y1 > y2 ? (y1 > y3 ? x1 : x3) : (y2 > y3 ? x2 : x3);
+            x_t = y1 > y2 ? (y2 > y3 ? x3 : x2) : (y1 > y3 ? x3 : x1);
             x_m = y1 > y2 ? (y2 > y3 ? x2 : (y1 > y3 ? x3:x1)):(y1 > y3 ? x1 : (y2 > y3 ? x3 : x2));
 
             upper_x = (int*)malloc(500*sizeof(int));
