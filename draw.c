@@ -338,8 +338,8 @@ jdyrlandweaver
 void draw_polygons( struct matrix *points, screen s, color c ) {
 
     int i, n, b;
-    int x1, y1, x2, y2, x3, y3;
-    int x_t, x_m, x_b, y_t, y_m, y_b;
+    double x1, y1, x2, y2, x3, y3;
+    double x_t, x_m, x_b, y_t, y_m, y_b;
     n = 0;
 
     if ( points->lastcol < 3 ) {
@@ -353,7 +353,7 @@ void draw_polygons( struct matrix *points, screen s, color c ) {
                  c = change_color( n++ );
 
 
-            draw_line( points->m[0][ i ],
+           draw_line( points->m[0][ i ],
                     points->m[1][ i ],
                     points->m[0][ i + 1 ],
                     points->m[1][ i + 1 ],
@@ -377,7 +377,7 @@ void draw_polygons( struct matrix *points, screen s, color c ) {
             y_b = y1 > y2 ? (y1 > y3 ? y1 : y3) : (y2 > y3 ? y2 : y3);
             y_t = y1 > y2 ? (y2 > y3 ? y3 : y2) : (y1 > y3 ? y3 : y1);
             y_m = y1 > y2 ? (y2 > y3 ? y2 : (y1 > y3 ? y3:y1)):(y1 > y3 ? y1 : (y2 > y3 ? y3 : y2));
-            printf("YT %d\tYB%d\tYM%d\n", y_t, y_b, y_m);
+            printf("YT %f\tYB%f\tYM%f\n", y_t, y_b, y_m);
 
             x_b = y1 > y2 ? (y1 > y3 ? x1 : x3) : (y2 > y3 ? x2 : x3);
             x_t = y1 > y2 ? (y2 > y3 ? x3 : x2) : (y1 > y3 ? x3 : x1);
@@ -388,14 +388,8 @@ void draw_polygons( struct matrix *points, screen s, color c ) {
                 double xleft, xright, k;
                 int  yy;
                 xleft = xright = x_t;
-                if (y_t - y_m == 0) {
-                    m_topToMid = 0;
-                    m_topToBottom = 0;
-                    m_midToBottom = 0;
-                    printf("divide by zero\n");
-                }
-                /*m_topToMid = (x_t - x_m) / (y_t - y_m);*/
-                m_topToBottom = (x_t - x_b) / (y_t - y_b);
+                m_topToMid = (x_t - x_m) / (y_t - y_m);
+                    m_topToBottom = (x_t - x_m) / (y_t - y_b);
                 m_midToBottom = (x_m - x_b) / (y_m - y_b);
                 for (yy = y_b; yy > y_m; yy--) {
                     draw_line((int)xleft, yy, (int)xright, yy, s, c);
@@ -409,19 +403,12 @@ void draw_polygons( struct matrix *points, screen s, color c ) {
                 double xleft, xright, k;
                 int  yy;
                 xleft = xright = x_t;
-                if (y_t - y_m == 0) {
-                    m_topToMid = 0;
-                    printf("asdgasdbasdb\n");
-                }
+
                 m_topToMid = (x_t - x_m) / (y_t - y_m);
                 m_topToBottom = (x_t - x_m) / (y_t - y_b);
-                if (y_m == y_b) {
-                    m_midToBottom = 0;
-                }
-                else {
-                    m_midToBottom = (x_t - x_m) / (y_m - y_b);
-                }
-                printf("excute me? yy = %d\ty_m=%d\n", y_t, y_m);
+                m_midToBottom = (x_t - x_m) / (y_m - y_b);
+
+                printf("excute me? yy = %f\ty_m=%f\n", y_t, y_m);
                 for (yy = y_t; yy < y_m; yy++) {
                     draw_line((int)xleft, yy, (int)xright, yy, s, c);
                     printf("(int)xleft is %d\tyyis%d\t (int)xright is %d\n", (int)xleft, yy, (int)xright);
