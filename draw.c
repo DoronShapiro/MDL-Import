@@ -447,6 +447,7 @@ void draw_filled_polygons( struct matrix *points, screen s, color c ) {
     int x1, y1, x2, y2, x3, y3;
     int x_t, x_m, x_b, y_t, y_m, y_b;
     int *upper_x, *lower_x, *side_x;
+    n = 0;
 
     if ( points->lastcol < 3 ) {
         printf("Need at least 3 points to draw a polygon\n");
@@ -497,7 +498,7 @@ void draw_filled_polygons( struct matrix *points, screen s, color c ) {
             fill_hor_line(lower_x, x_m, y_m, x_b, y_b);
             fill_hor_line(side_x, x_t, y_t, x_b, y_b);
 
-            c = change_color(1);
+            c = change_color(n++);
 
             int yy;
             for (yy = 0; yy < y_b-y_t; yy++) {
