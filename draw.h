@@ -3,6 +3,7 @@
 
 #include "matrix.h"
 
+void fill_hor_line(int *xvars, int x0, int y0, int x1, int y1);
 void draw_line(int x0, int y0, 
 	       int x1, int y1, 
 	       screen s, color c);
@@ -19,6 +20,7 @@ void add_polygon( struct matrix *points,
 		  double x1, double y1, double z1, 
 		  double x2, double y2, double z2 );
 void draw_polygons( struct matrix *points, screen s, color c );
+void draw_filled_polygons( struct matrix *points, screen s, color c );
 
 //advanced shapes
 void add_circle( struct matrix * points, 

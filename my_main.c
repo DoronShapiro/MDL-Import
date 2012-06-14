@@ -34,7 +34,7 @@
                     provided values. Store that in a 
                     temporary matrix, multiply it by the
                     current top of the origins stack, then
-                    call draw_polygons.
+                    call draw_filled_polygons.
 
   line: create a line based on the provided values. Store 
         that in a temporary matrix, multiply it by the
@@ -359,7 +359,7 @@ void my_main(int polygons) {
 		case IMPORT:
                     import_mesh(tmp, op[i].op.import.filename);
                     matrix_mult(s->data[ s->top ], tmp);
-                    draw_polygons(tmp, t, g);
+                    draw_filled_polygons(tmp, t, g);
                     tmp->lastcol = 0;
 		    break;
                 case SET:
@@ -381,7 +381,7 @@ void my_main(int polygons) {
                             step);
                     //apply the current top origin
                     matrix_mult(s->data[ s->top ], tmp);
-                    draw_polygons(tmp, t, g);
+                    draw_filled_polygons(tmp, t, g);
                     tmp->lastcol = 0;
                     break;
 
@@ -393,7 +393,7 @@ void my_main(int polygons) {
                             op[i].op.torus.r1,
                             step);
                     matrix_mult(s->data[ s->top ], tmp);
-                    draw_polygons(tmp, t, g);
+                    draw_filled_polygons(tmp, t, g);
                     tmp->lastcol = 0;
                     break;
 
@@ -405,7 +405,7 @@ void my_main(int polygons) {
                             op[i].op.box.d1[1],
                             op[i].op.box.d1[2]);
                     matrix_mult(s->data[ s->top ], tmp);
-                    draw_polygons(tmp, t, g);
+                    draw_filled_polygons(tmp, t, g);
                     tmp->lastcol = 0;
                     break;
 

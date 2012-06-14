@@ -323,6 +323,200 @@ void add_torus( struct matrix * points,
     } //end for lat
 }
 
+void fill_hor_line(int *xvars, int x0, int y0, int x1, int y1) {
+
+    int x, y, d, dx, dy;
+
+    x = x0;
+    y = y0;
+
+    //swap points so we're always dra~~~~~~*W*~~~~~~~~~ing left to right
+    if ( x0 > x1 ) {
+        x = x1;
+        y = y1;
+        x1 = x0;
+        y1 = y0;
+    }
+
+    //need to know dx and dy for this version
+    dx = (x1 - x) * 2;
+    dy = (y1 - y) * 2;
+
+    //positive slope: Octants 1, 2 (5 and 6)
+    if ( dy > 0 ) {
+
+        //slope < 1: Octant 1 (5)
+        if ( dx > dy ) {
+            d = dy - ( dx / 2 );
+
+            while ( x <= x1 ) {
+                xvars[y - (y1 < y0 ? y1 : y0)] = x;
+
+                if ( d < 0 ) {
+                    x = x + 1;
+                    d = d + dy;
+                }
+                else {
+                    x = x + 1;
+                    y = y + 1;
+                    d = d + dy - dx;
+                }
+            }
+        }
+
+        //slope > 1: Octant 2 (6)
+        else {
+            d = ( dy / 2 ) - dx;
+            while ( y <= y1 ) {
+
+                xvars[y - (y1 < y0 ? y1 : y0)] = x;
+                if ( d > 0 ) {
+                    y = y + 1;
+                    d = d - dx;
+                }
+                else {
+                    y = y + 1;
+                    x = x + 1;
+                    d = d + dy - dx;
+                }
+            }
+        }
+    }
+
+    //negative slope: Octants 7, 8 (3 and 4)
+    else { 
+
+        //slope > -1: Octant 8 (4)
+        if ( dx > abs(dy) ) {
+
+            d = dy + ( dx / 2 );
+
+            while ( x <= x1 ) {
+
+                xvars[(y1 < y0 ? y1 : y0)-y] = x;
+
+                if ( d > 0 ) {
+                    x = x + 1;
+                    d = d + dy;
+                }
+                else {
+                    x = x + 1;
+                    y = y - 1;
+                    d = d + dy + dx;
+                }
+            }
+        }
+
+        //slope < -1: Octant 7 (3)
+        else {
+
+            d =  (dy / 2) + dx;
+
+            while ( y >= y1 ) {
+
+                xvars[(y1 < y0 ? y1 : y0)-y] = x;
+                if ( d < 0 ) {
+                    y = y - 1;
+                    d = d + dx;
+                }
+                else {
+                    y = y - 1;
+                    x = x + 1;
+                    d = d + dy + dx;
+                }
+            }
+        }
+    }
+}
+
+/*======== void draw_filled_polygons() ==========
+Inputs:   struct matrix *points
+screen s
+color c  
+Returns: 
+
+Go through the point matrix as if it were a polygon matrix
+Call drawline in batches of 3s to create triangles.
+
+04/04/12 13:39:09
+jdyrlandweaver
+====================*/
+void draw_filled_polygons( struct matrix *points, screen s, color c ) {
+
+    int i, n, b;
+    int x1, y1, x2, y2, x3, y3;
+    int x_t, x_m, x_b, y_t, y_m, y_b;
+    int *upper_x, *lower_x, *side_x;
+
+    if ( points->lastcol < 3 ) {
+        printf("Need at least 3 points to draw a polygon\n");
+        return;
+    }
+
+    for( i=0; i < points->lastcol - 2; i+=3 ) {
+
+        if ( calculate_dot( points, i ) >= 0 ) {
+            x1 = points->m[0][i];
+            y1 = points->m[1][i];
+            x2 = points->m[0][i+1];
+            y2 = points->m[1][i+1];
+            x3 = points->m[0][i+2];
+            y3 = points->m[1][i+2];
+
+            y_t = y1 > y2 ? (y1 > y3 ? y1 : y3) : (y2 > y3 ? y2 : y3);
+            y_b = y1 > y2 ? (y2 > y3 ? y3 : y2) : (y1 > y3 ? y3 : y1);
+            y_m = y1 > y2 ? (y2 > y3 ? y2 : (y1 > y3 ? y3:y1)):(y1 > y3 ? y1 : (y2 > y3 ? y3 : y2));
+
+            x_t = y1 > y2 ? (y1 > y3 ? x1 : x3) : (y2 > y3 ? x2 : x3);
+            x_b = y1 > y2 ? (y2 > y3 ? x3 : x2) : (y1 > y3 ? x3 : x1);
+            x_m = y1 > y2 ? (y2 > y3 ? x2 : (y1 > y3 ? x3:x1)):(y1 > y3 ? x1 : (y2 > y3 ? x3 : x2));
+
+            upper_x = (int*)malloc(500*sizeof(int));
+            lower_x = (int*)malloc(500*sizeof(int));
+            side_x = (int*)malloc(500*sizeof(int));
+
+            c = change_color(0);
+
+
+            draw_line( points->m[0][ i ],
+                    points->m[1][ i ],
+                    points->m[0][ i + 1 ],
+                    points->m[1][ i + 1 ],
+                    s, c );
+            draw_line( points->m[0][ i + 1 ],
+                    points->m[1][ i + 1 ],
+                    points->m[0][ i + 2 ],
+                    points->m[1][ i + 2 ],
+                    s, c );
+            draw_line( points->m[0][ i + 2 ],
+                    points->m[1][ i + 2 ],
+                    points->m[0][ i ],
+                    points->m[1][ i ],
+                    s, c );
+            fill_hor_line(upper_x, x_t, y_t, x_m, y_m);
+            fill_hor_line(lower_x, x_m, y_m, x_b, y_b);
+            fill_hor_line(side_x, x_t, y_t, x_b, y_b);
+
+            c = change_color(1);
+
+            int yy;
+            for (yy = 0; yy < y_b-y_t; yy++) {
+                if (yy < y_b - y_m) {
+                    draw_line(upper_x[yy], yy+y_b, side_x[yy], yy+y_b, s, c);
+                }
+                else {
+                    draw_line(lower_x[yy], yy+y_b, side_x[yy], yy+y_b, s, c);
+                }
+            }
+            /*free(upper_x);*/
+            /*free(lower_x);*/
+            /*free(side_x);*/
+        }
+
+    }
+
+
+}
 /*======== void draw_polygons() ==========
 Inputs:   struct matrix *points
 screen s
