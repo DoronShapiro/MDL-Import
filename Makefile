@@ -1,4 +1,4 @@
-OBJECTS= symtab.o print_pcode.o matrix.o my_main.o display.o draw.o gmath.o stack.o
+OBJECTS= symtab.o print_pcode.o matrix.o my_main.o display.o draw.o gmath.o stack.o import_obj.o my_string.o
 CFLAGS= -g
 LDFLAGS= -lm
 CC= gcc
@@ -32,7 +32,7 @@ my_main.o: my_main.c misc_headers.h print_pcode.c matrix.h display.h ml6.h draw.
 display.o: display.c display.h ml6.h matrix.h
 	$(CC) $(CFLAGS) -c display.c
 
-draw.o: draw.c draw.h display.h ml6.h matrix.h gmath.h
+draw.o: draw.c draw.h display.h ml6.h matrix.h gmath.h importers/import_obj.h
 	$(CC) $(CFLAGS) -c draw.c
 
 gmath.o: gmath.c gmath.h matrix.h
@@ -40,6 +40,12 @@ gmath.o: gmath.c gmath.h matrix.h
 
 stack.o: stack.c stack.h matrix.h
 	$(CC) $(CFLAGS) -c stack.c 
+
+import_obj.o: importers/import_obj.c importers/import_obj.h matrix.h
+	$(CC) $(CFLAGS) -c importers/import_obj.c
+
+my_string.o: my_string.c my_string.h
+	$(CC) $(CFLAGS) -c my_string.c
 
 clean:
 	rm y.tab.c y.tab.h

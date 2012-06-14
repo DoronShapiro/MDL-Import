@@ -58,4 +58,8 @@ void add_sphere( struct matrix * points,
 void add_torus( struct matrix * points, 
 		double cx, double cy, double cz, double r1, double r2, 
 		double step );
+
+//mesh import
+void import_mesh(struct matrix * points,
+             char* filename);
 #endif

@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
+#include <errno.h>
 
 #include "ml6.h"
 #include "display.h"
 #include "draw.h"
 #include "matrix.h"
 #include "gmath.h"
+#include "importers/import_obj.h"
 
 /*======== void add_box() ==========
 Inputs:   struct matrix * points
@@ -1028,3 +1031,19 @@ void draw_line(int x0, int y0, int x1, int y1, screen s, color c) {
     }
 }
 
+void import_mesh(struct matrix * points, char* filename){
+    FILE * f;
+    
+    if(!strcmp(&(filename[strlen(filename)-4]), ".obj") || !strcmp(&(filename[strlen(filename)-4]), ".OBJ")){
+        printf("its an obj\n");
+        f = fopen(filename, "r");
+        if(f == NULL)
+            printf("Error opening %s: %s\n",filename, strerror(errno));
+        else{
+            import_mesh_obj(points, f);
+            fclose(f);
+        }
+    }
+    else
+        printf("Error opening %s: unrecognized filetype\n",filename);
+}

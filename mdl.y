@@ -37,6 +37,7 @@
 %token <string> PUSH POP SAVE GENERATE_RAYFILES
 %token <string> SHADING SHADING_TYPE SETKNOBS FOCAL DISPLAY WEB
 %token <string> CO
+%token <string> IMPORT
 %%
 /* Grammar rules */
 
@@ -566,6 +567,14 @@ MESH STRING CO STRING STRING
   op[lastop].op.mesh.cs = add_symbol($5,SYM_MATRIX,m);
   lastop++;
 } |
+IMPORT STRING
+{
+  lineno++;
+  op[lastop].opcode = IMPORT;
+  strncpy(op[lastop].op.import.filename, $2, 255);
+  //op[lastop].op.import.p = add_symbol($3, SYM_FILE, 0);
+  lastop++;
+} |
 SET STRING DOUBLE
 {
   lineno++;
@@ -754,7 +763,6 @@ AMBIENT DOUBLE DOUBLE DOUBLE
   op[lastop].op.ambient.c[2] = $4;
   lastop++;
 };
-
 
 
 

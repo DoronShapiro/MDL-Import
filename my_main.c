@@ -356,6 +356,12 @@ void my_main(int polygons) {
 
             switch (op[i].opcode) {
 
+		case IMPORT:
+                    import_mesh(tmp, op[i].op.import.filename);
+                    matrix_mult(s->data[ s->top ], tmp);
+                    draw_polygons(tmp, t, g);
+                    tmp->lastcol = 0;
+		    break;
                 case SET:
                     set_value(lookup_symbol(op[i].op.set.p->name),
                             op[i].op.set.p->s.value);
