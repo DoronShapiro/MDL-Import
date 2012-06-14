@@ -388,8 +388,8 @@ void draw_polygons( struct matrix *points, screen s, color c ) {
                 xleft = xright = x_t;
 
                 m_topToMid = (x_t - x_m) / (y_t - y_m);
-                m_topToBottom = (x_t - x_m) / (y_t - y_b);
-                m_midToBottom = (x_t - x_m) / (y_m - y_b);
+                m_topToBottom = (x_t - x_b) / (y_t - y_b);
+                m_midToBottom = (x_m - x_b) / (y_m - y_b);
                 yy = y_t;
 
                 while (yy < y_m) {
