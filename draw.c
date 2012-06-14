@@ -353,21 +353,21 @@ void draw_polygons( struct matrix *points, screen s, color c ) {
                  c = change_color( n++ );
 
 
-           draw_line( points->m[0][ i ],
-                    points->m[1][ i ],
-                    points->m[0][ i + 1 ],
-                    points->m[1][ i + 1 ],
-                    s, c );
-            draw_line( points->m[0][ i + 1 ],
-                    points->m[1][ i + 1 ],
-                    points->m[0][ i + 2 ],
-                    points->m[1][ i + 2 ],
-                    s, c );
-            draw_line( points->m[0][ i + 2 ],
-                    points->m[1][ i + 2 ],
-                    points->m[0][ i ],
-                    points->m[1][ i ],
-                    s, c );
+           /*draw_line( points->m[0][ i ],*/
+                    /*points->m[1][ i ],*/
+                    /*points->m[0][ i + 1 ],*/
+                    /*points->m[1][ i + 1 ],*/
+                    /*s, c );*/
+            /*draw_line( points->m[0][ i + 1 ],*/
+                    /*points->m[1][ i + 1 ],*/
+                    /*points->m[0][ i + 2 ],*/
+                    /*points->m[1][ i + 2 ],*/
+                    /*s, c );*/
+            /*draw_line( points->m[0][ i + 2 ],*/
+                    /*points->m[1][ i + 2 ],*/
+                    /*points->m[0][ i ],*/
+                    /*points->m[1][ i ],*/
+                    /*s, c );*/
             x1 = points->m[0][i];
             y1 = points->m[1][i];
             x2 = points->m[0][i+1];
@@ -393,13 +393,14 @@ void draw_polygons( struct matrix *points, screen s, color c ) {
                 yy = y_t;
 
                 while (yy < y_m) {
-                    draw_line(xleft, yy, xright, yy, s, c);
+                    draw_line((int)xleft, (int)yy, (int)xright, (int)yy, s, c);
                     xleft += m_topToMid;
                     xright += m_topToBottom;
                     yy++;
                 }
+                xleft = x_m;
                 while (yy < y_b) {
-                    draw_line(xleft, yy, xright, yy, s, c);
+                    draw_line((int)xleft, (int)yy, (int)xright, (int)yy, s, c);
                     xleft += m_midToBottom;
                     xright += m_topToBottom;
                     yy++;
