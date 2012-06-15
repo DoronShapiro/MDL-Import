@@ -35,6 +35,7 @@ struct light_v {
     int y;
     int z;
 } light_v;
+typedef struct light_v light_source;
 
 /*
   We can now use color as a data type representing a point.

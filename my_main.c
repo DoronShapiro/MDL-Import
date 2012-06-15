@@ -316,7 +316,7 @@ void my_main(int polygons) {
     struct stack *s;
     screen t;
     color g;
-    light l;
+    light_source l;
     char q;
     struct vary_node ** knobs;
     struct vary_node *vn;
