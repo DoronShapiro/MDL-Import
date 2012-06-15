@@ -27,6 +27,15 @@ struct point_t {
   double z;
 } point_t;
 
+struct light_v {
+    int r;
+    int g;
+    int b;
+    int x;
+    int y;
+    int z;
+} light_v;
+
 /*
   We can now use color as a data type representing a point.
   eg:
