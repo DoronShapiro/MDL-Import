@@ -318,6 +318,7 @@ void my_main(int polygons) {
     color g;
     light_source l;
     double ambient[3];
+    double camera[6];
     char q;
     struct vary_node ** knobs;
     struct vary_node *vn;
@@ -331,7 +332,7 @@ void my_main(int polygons) {
     g.blue = 255;
     ambient[0] = ambient[1] = ambient[2] = -1;
     l.r = l.g = l.b = l.x = l.y = l.z = -1;
-
+    camera[0] = camera[1] = camera[2] = camera[3] = camera[4] = camera[5] = -1;
     first_pass();
 
     if (num_frames == 1)
@@ -363,7 +364,7 @@ void my_main(int polygons) {
                 case IMPORT:
                     import_mesh(tmp, op[i].op.import.filename);
                     matrix_mult(s->data[ s->top ], tmp);
-                    draw_polygons(tmp, t, g, l, ambient);
+                    draw_polygons(tmp, t, g, l, ambient, camera);
                     tmp->lastcol = 0;
                     break;
                 case SET:
@@ -391,7 +392,14 @@ void my_main(int polygons) {
                     ambient[1] = op[i].op.ambient.c[1];
                     ambient[2] = op[i].op.ambient.c[2];
                     break;
-
+		case CAMERA:
+		    camera[0] = op[i].op.camera.eye[0];
+		    camera[1] = op[i].op.camera.eye[1];
+		    camera[2] = op[i].op.camera.eye[2];
+		    camera[3] = op[i].op.camera.aim[0];
+		    camera[4] = op[i].op.camera.aim[1];
+		    camera[5] = op[i].op.camera.aim[2];
+                    break;
                 case SPHERE:
                     add_sphere(tmp, op[i].op.sphere.d[0], //cx
                             op[i].op.sphere.d[1], //cy
@@ -400,7 +408,7 @@ void my_main(int polygons) {
                             step);
                     //apply the current top origin
                     matrix_mult(s->data[ s->top ], tmp);
-                    draw_polygons(tmp, t, g, l, ambient);
+                    draw_polygons(tmp, t, g, l, ambient, camera);
                     tmp->lastcol = 0;
                     break;
 
@@ -412,7 +420,7 @@ void my_main(int polygons) {
                             op[i].op.torus.r1,
                             step);
                     matrix_mult(s->data[ s->top ], tmp);
-                    draw_polygons(tmp, t, g, l, ambient);
+                    draw_polygons(tmp, t, g, l, ambient, camera);
                     tmp->lastcol = 0;
                     break;
 
@@ -424,7 +432,7 @@ void my_main(int polygons) {
                             op[i].op.box.d1[1],
                             op[i].op.box.d1[2]);
                     matrix_mult(s->data[ s->top ], tmp);
-                    draw_polygons(tmp, t, g, l, ambient);
+                    draw_polygons(tmp, t, g, l, ambient, camera);
                     tmp->lastcol = 0;
                     break;
 

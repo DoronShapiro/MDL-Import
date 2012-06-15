@@ -335,14 +335,17 @@ Call drawline in batches of 3s to create triangles.
 04/04/12 13:39:09
 jdyrlandweaver
 ====================*/
-void draw_polygons( struct matrix *points, screen s, color c ,light_source l, double *ambient) {
+void draw_polygons( struct matrix *points, screen s, color c ,light_source l, double *ambient, double *camera) {
 
     int i, n, b;
-    double x1, y1, z1, x2, y2, z2, x3, y3, z3;
-    double x_t, x_m, x_b, y_t, y_m, y_b, z_t, z_m, z_b;
-    double k;
+    int x1, y1, x2, y2, x3, y3;
+    double z1, z2, z3;
+    int x_t, x_m, x_b, y_t, y_m, y_b;
+    double z_t, z_m, z_b;
+    double k, specexp;
     n = 0;
     k = 1;
+    specexp = 1;
     printf("light data:%f\t%f\t%f\t%f\t%f\t%f\n", l.r, l.g, l.b,
             l.x, l.y, l.z);
 
@@ -386,11 +389,27 @@ void draw_polygons( struct matrix *points, screen s, color c ,light_source l, do
                 + normal_y * normal[1]
                 + normal_z * normal[2];
 
-            if (ambient[0] >=0) {
+	    double spec_ref_x, spec_ref_y, spec_ref_z;
+	    spec_ref_x = (2 * normal[0] * dot_prod) - l.x;
+            spec_ref_y = (2 * normal[1] * dot_prod) - l.y;
+            spec_ref_z = (2 * normal[2] * dot_prod) - l.z;
+	    double normal_spec_x, normal_spec_y, normal_spec_z, normal_view_x, normal_view_y, normal_view_z;
+	    double otherothermag, otherotherothermag;
+	    otherothermag = sqrt((spec_ref_x*spec_ref_x) + (spec_ref_y*spec_ref_y) + (spec_ref_z*spec_ref_z));
+	    normal_spec_x = spec_ref_x / otherothermag;
+	    normal_spec_y = spec_ref_y / otherothermag;
+	    normal_spec_z = spec_ref_z / otherothermag;
+	    otherotherothermag = sqrt((camera[0]*camera[0]) + (camera[1]*camera[1]) + (camera[2]*camera[2]));
+	    normal_view_x = camera[0] / otherotherothermag;
+	    normal_view_y = camera[1] / otherotherothermag;
+            normal_view_z = camera[2] / otherotherothermag;
+	    double spec_dot_prod = normal_spec_x * normal_view_x + normal_spec_y * normal_view_y + normal_spec_z * normal_view_z;
+
+            if (ambient[0] >=0 && camera[0] >=0) {
                 printf("DERP\n");
-                c.red = (k * ambient[0] * 255/3) + (k * l.r * dot_prod * 255/3) + (255/3);
-                c.green = k*ambient[1] * (255/3)+ (k * l.g * dot_prod * 255/3) + (255/3);
-                c.blue = k*ambient[2] * (255/3)+ (k * l.b * dot_prod * 255/3) + (255/3);
+                c.red = (k * ambient[0] * 255/3) + (k * l.r * dot_prod * 255/3) + (k * l.r * pow(spec_dot_prod, specexp) * 255/3);
+                c.green = k*ambient[1] * (255/3)+ (k * l.g * dot_prod * 255/3) + (k * l.g * pow(spec_dot_prod, specexp) * 255/3);
+                c.blue = k*ambient[2] * (255/3)+ (k * l.b * dot_prod * 255/3) + (k * l.b * pow(spec_dot_prod, specexp) * 255/3);
                 /*c.green = (k * ambient[1] * 255/3) + (k * l.g * dot_prod * 255/3) + (255/3);*/
                 /*c.blue = (k * ambient[2] * 255/3) + (k * l.b * dot_prod * 255/3) + (255/3);*/
            }
@@ -418,12 +437,12 @@ void draw_polygons( struct matrix *points, screen s, color c ,light_source l, do
             xleft = xright = x_t;
             zleft = zright = z_t;
 
-            m_topToMid = (x_t - x_m) / (y_t - y_m);
-            m_topToBottom = (x_t - x_b) / (y_t - y_b);
-            m_midToBottom = (x_m - x_b) / (y_m - y_b);
-            dzdx_TtM = (x_t - x_m) / (z_t - z_m);
-            dzdx_TtB = (x_t - x_b) / (z_t - z_b);
-            dzdx_MtB = (x_m - x_b) / (z_m - z_b);
+            m_topToMid = 1.0*(x_t - x_m) / (y_t - y_m);
+            m_topToBottom = 1.0*(x_t - x_b) / (y_t - y_b);
+            m_midToBottom = 1.0*(x_m - x_b) / (y_m - y_b);
+            dzdx_TtM = 1.0*(x_t - x_m) / (z_t - z_m);
+            dzdx_TtB = 1.0*(x_t - x_b) / (z_t - z_b);
+            dzdx_MtB = 1.0*(x_m - x_b) / (z_m - z_b);
 
             yy = y_t;
 
@@ -987,8 +1006,9 @@ void draw_lines( struct matrix * points, screen s, color c) {
 
 void draw_line(int x0, int y0, double z0, int x1, int y1, double z1, screen s, color c) {
 
-    int x, y, z, d, dx, dy, dzdx;
-
+    int x, y, d, dx, dy;
+    double z;
+    double dzdx;
     x = x0;
     y = y0;
 
@@ -1050,7 +1070,7 @@ void draw_line(int x0, int y0, double z0, int x1, int y1, double z1, screen s, c
 
         //slope > -1: Octant 8 (4)
         //NOTE: z-interpolation happens here
-        if ( dx > abs(dy) ) {
+        if ( dx > abs(dy) || dy == 0) {
 
             z = z0;
             d = dy + ( dx / 2 );
@@ -1059,10 +1079,13 @@ void draw_line(int x0, int y0, double z0, int x1, int y1, double z1, screen s, c
             while ( x <= x1 ) {
 
                 if(z > get_current_z(s, x, y)){
+  		    c.blue = (int)(255 * z / 100);
+                    c.green = (int)(255 * z / 100);
+                    c.red = (int)(255 * z / 100);
                     c.z = z;
                     plot(s, c, x, y);
                 }
-
+		z += dzdx;
                 if ( d > 0 ) {
                     x = x + 1;
                     d = d + dy;
