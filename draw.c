@@ -347,10 +347,10 @@ void draw_polygons( struct matrix *points, screen s, color c ) {
         return;
     }
 
-    for( i=0; i < points->lastcol - 2; i+=3 ) {
+    for(i=0; i < points->lastcol - 2; i+=3) {
 
         if ( calculate_dot( points, i ) >= 0 ) {
-                 c = change_color( n++ );
+            c = change_color( n++ );
 
             x1 = points->m[0][i];
             y1 = points->m[1][i];
@@ -369,48 +369,45 @@ void draw_polygons( struct matrix *points, screen s, color c ) {
             x_b = y1 > y2 ? (y1 > y3 ? x1 : x3) : (y2 > y3 ? x2 : x3);
             x_t = y1 > y2 ? (y2 > y3 ? x3 : x2) : (y1 > y3 ? x3 : x1);
             x_m = y1 > y2 ? (y2 > y3 ? x2 : (y1 > y3 ? x3:x1)):(y1 > y3 ? x1 : (y2 > y3 ? x3 : x2));
-            
+
             z_b = y1 > y2 ? (y1 > y3 ? z1 : z3) : (y2 > y3 ? z2 : z3);
             z_t = y1 > y2 ? (y2 > y3 ? z3 : z2) : (y1 > y3 ? z3 : z1);
             z_m = y1 > y2 ? (y2 > y3 ? z2 : (y1 > y3 ? z3:z1)):(y1 > y3 ? z1 : (y2 > y3 ? z3 : z2));
-            
-                double m_topToMid, m_topToBottom, m_midToBottom, dzdx_TtM, dzdx_TtB, dzdx_MtB;
-                double xleft, xright, zleft, zright;
-                int  yy;
-                xleft = xright = x_t;
-                zleft = zright = z_t;
 
-                m_topToMid = (x_t - x_m) / (y_t - y_m);
-                m_topToBottom = (x_t - x_b) / (y_t - y_b);
-                m_midToBottom = (x_m - x_b) / (y_m - y_b);
-                dzdx_TtM = (x_t - x_m) / (z_t - z_m);
-                dzdx_TtB = (x_t - x_b) / (z_t - z_b);
-                dzdx_MtB = (x_m - x_b) / (z_m - z_b);
-                
-                yy = y_t;
+            double m_topToMid, m_topToBottom, m_midToBottom, dzdx_TtM, dzdx_TtB, dzdx_MtB;
+            double xleft, xright, zleft, zright;
+            int  yy;
+            xleft = xright = x_t;
+            zleft = zright = z_t;
 
-                while (yy < y_m) {
-                    draw_line((int)xleft, (int)yy, zleft, (int)xright, (int)yy, zright, s, c);
-                    xleft += m_topToMid;
-                    xright += m_topToBottom;
-                    zleft += dzdx_TtM;
-                    zright += dzdx_TtB;
-                    yy++;
-                }
-                xleft = x_m;
-                while (yy < y_b) {
-                    draw_line((int)xleft, (int)yy, zleft, (int)xright, (int)yy, zright, s, c);
-                    xleft += m_midToBottom;
-                    xright += m_topToBottom;
-                    zleft += dzdx_MtB;
-                    zright += dzdx_TtB;
-                    yy++;
-                }
+            m_topToMid = (x_t - x_m) / (y_t - y_m);
+            m_topToBottom = (x_t - x_b) / (y_t - y_b);
+            m_midToBottom = (x_m - x_b) / (y_m - y_b);
+            dzdx_TtM = (x_t - x_m) / (z_t - z_m);
+            dzdx_TtB = (x_t - x_b) / (z_t - z_b);
+            dzdx_MtB = (x_m - x_b) / (z_m - z_b);
+
+            yy = y_t;
+
+            while (yy < y_m) {
+                draw_line((int)xleft, (int)yy, zleft, (int)xright, (int)yy, zright, s, c);
+                xleft += m_topToMid;
+                xright += m_topToBottom;
+                zleft += dzdx_TtM;
+                zright += dzdx_TtB;
+                yy++;
+            }
+            xleft = x_m;
+            while (yy < y_b) {
+                draw_line((int)xleft, (int)yy, zleft, (int)xright, (int)yy, zright, s, c);
+                xleft += m_midToBottom;
+                xright += m_topToBottom;
+                zleft += dzdx_MtB;
+                zright += dzdx_TtB;
+                yy++;
+            }
         }
-
     }
-
-
 }
 
 /*======== void add_polygon() ==========

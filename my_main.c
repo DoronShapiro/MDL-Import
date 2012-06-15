@@ -316,6 +316,7 @@ void my_main(int polygons) {
     struct stack *s;
     screen t;
     color g;
+    light l;
     char q;
     struct vary_node ** knobs;
     struct vary_node *vn;
@@ -356,12 +357,12 @@ void my_main(int polygons) {
 
             switch (op[i].opcode) {
 
-		case IMPORT:
+                case IMPORT:
                     import_mesh(tmp, op[i].op.import.filename);
                     matrix_mult(s->data[ s->top ], tmp);
                     draw_polygons(tmp, t, g);
                     tmp->lastcol = 0;
-		    break;
+                    break;
                 case SET:
                     set_value(lookup_symbol(op[i].op.set.p->name),
                             op[i].op.set.p->s.value);
@@ -371,6 +372,10 @@ void my_main(int polygons) {
                     for (j = 0; j < lastsym; j++)
                         if (symtab[j].type == SYM_VALUE)
                             symtab[j].s.value = op[i].op.setknobs.value;
+                    break;
+                case LIGHT:
+                    break;
+                case AMBIENT:
                     break;
 
                 case SPHERE:
