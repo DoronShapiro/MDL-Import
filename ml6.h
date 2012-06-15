@@ -24,6 +24,7 @@ struct point_t {
   int red;
   int green;
   int blue;
+  double z;
 } point_t;
 
 /*

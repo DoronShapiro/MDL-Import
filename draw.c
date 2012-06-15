@@ -338,8 +338,8 @@ jdyrlandweaver
 void draw_polygons( struct matrix *points, screen s, color c ) {
 
     int i, n, b;
-    double x1, y1, x2, y2, x3, y3;
-    double x_t, x_m, x_b, y_t, y_m, y_b;
+    double x1, y1, z1, x2, y2, z2, x3, y3, z3;
+    double x_t, x_m, x_b, y_t, y_m, y_b, z_t, z_m, z_b;
     n = 0;
 
     if ( points->lastcol < 3 ) {
@@ -352,28 +352,15 @@ void draw_polygons( struct matrix *points, screen s, color c ) {
         if ( calculate_dot( points, i ) >= 0 ) {
                  c = change_color( n++ );
 
-
-           /*draw_line( points->m[0][ i ],*/
-                    /*points->m[1][ i ],*/
-                    /*points->m[0][ i + 1 ],*/
-                    /*points->m[1][ i + 1 ],*/
-                    /*s, c );*/
-            /*draw_line( points->m[0][ i + 1 ],*/
-                    /*points->m[1][ i + 1 ],*/
-                    /*points->m[0][ i + 2 ],*/
-                    /*points->m[1][ i + 2 ],*/
-                    /*s, c );*/
-            /*draw_line( points->m[0][ i + 2 ],*/
-                    /*points->m[1][ i + 2 ],*/
-                    /*points->m[0][ i ],*/
-                    /*points->m[1][ i ],*/
-                    /*s, c );*/
             x1 = points->m[0][i];
             y1 = points->m[1][i];
+            z1 = points->m[2][i];
             x2 = points->m[0][i+1];
             y2 = points->m[1][i+1];
+            z2 = points->m[2][i+1];
             x3 = points->m[0][i+2];
             y3 = points->m[1][i+2];
+            z3 = points->m[2][i+2];
             y_b = y1 > y2 ? (y1 > y3 ? y1 : y3) : (y2 > y3 ? y2 : y3);
             y_t = y1 > y2 ? (y2 > y3 ? y3 : y2) : (y1 > y3 ? y3 : y1);
             y_m = y1 > y2 ? (y2 > y3 ? y2 : (y1 > y3 ? y3:y1)):(y1 > y3 ? y1 : (y2 > y3 ? y3 : y2));
@@ -382,27 +369,41 @@ void draw_polygons( struct matrix *points, screen s, color c ) {
             x_b = y1 > y2 ? (y1 > y3 ? x1 : x3) : (y2 > y3 ? x2 : x3);
             x_t = y1 > y2 ? (y2 > y3 ? x3 : x2) : (y1 > y3 ? x3 : x1);
             x_m = y1 > y2 ? (y2 > y3 ? x2 : (y1 > y3 ? x3:x1)):(y1 > y3 ? x1 : (y2 > y3 ? x3 : x2));
-                double m_topToMid, m_topToBottom, m_midToBottom;
-                double xleft, xright, k;
+            
+            z_b = y1 > y2 ? (y1 > y3 ? z1 : z3) : (y2 > y3 ? z2 : z3);
+            z_t = y1 > y2 ? (y2 > y3 ? z3 : z2) : (y1 > y3 ? z3 : z1);
+            z_m = y1 > y2 ? (y2 > y3 ? z2 : (y1 > y3 ? z3:z1)):(y1 > y3 ? z1 : (y2 > y3 ? z3 : z2));
+            
+                double m_topToMid, m_topToBottom, m_midToBottom, dzdx_TtM, dzdx_TtB, dzdx_MtB;
+                double xleft, xright, zleft, zright;
                 int  yy;
                 xleft = xright = x_t;
+                zleft = zright = z_t;
 
                 m_topToMid = (x_t - x_m) / (y_t - y_m);
                 m_topToBottom = (x_t - x_b) / (y_t - y_b);
                 m_midToBottom = (x_m - x_b) / (y_m - y_b);
+                dzdx_TtM = (x_t - x_m) / (z_t - z_m);
+                dzdx_TtB = (x_t - x_b) / (z_t - z_b);
+                dzdx_MtB = (x_m - x_b) / (z_m - z_b);
+                
                 yy = y_t;
 
                 while (yy < y_m) {
-                    draw_line((int)xleft, (int)yy, (int)xright, (int)yy, s, c);
+                    draw_line((int)xleft, (int)yy, zleft, (int)xright, (int)yy, zright, s, c);
                     xleft += m_topToMid;
                     xright += m_topToBottom;
+                    zleft += dzdx_TtM;
+                    zright += dzdx_TtB;
                     yy++;
                 }
                 xleft = x_m;
                 while (yy < y_b) {
-                    draw_line((int)xleft, (int)yy, (int)xright, (int)yy, s, c);
+                    draw_line((int)xleft, (int)yy, zleft, (int)xright, (int)yy, zright, s, c);
                     xleft += m_midToBottom;
                     xright += m_topToBottom;
+                    zleft += dzdx_MtB;
+                    zright += dzdx_TtB;
                     yy++;
                 }
         }
@@ -943,15 +944,15 @@ void draw_lines( struct matrix * points, screen s, color c) {
 
     for ( i = 0; i < points->lastcol - 1; i+=2 ) {
 
-        draw_line( points->m[0][i], points->m[1][i], 
-                points->m[0][i+1], points->m[1][i+1], s, c);
+        draw_line( points->m[0][i], points->m[1][i], 0,
+                points->m[0][i+1], points->m[1][i+1], 0, s, c);
     } 	       
 }
 
 
-void draw_line(int x0, int y0, int x1, int y1, screen s, color c) {
+void draw_line(int x0, int y0, double z0, int x1, int y1, double z1, screen s, color c) {
 
-    int x, y, d, dx, dy;
+    int x, y, z, d, dx, dy, dzdx;
 
     x = x0;
     y = y0;
@@ -1013,13 +1014,19 @@ void draw_line(int x0, int y0, int x1, int y1, screen s, color c) {
     else { 
 
         //slope > -1: Octant 8 (4)
+        //NOTE: z-interpolation happens here
         if ( dx > abs(dy) ) {
 
+            z = z0;
             d = dy + ( dx / 2 );
-
+            dzdx = (z1 - z0) / (x1 - x0);
+            
             while ( x <= x1 ) {
 
-                plot(s, c, x, y);
+                if(z > get_current_z(s, x, y)){
+                    c.z = z;
+                    plot(s, c, x, y);
+                }
 
                 if ( d > 0 ) {
                     x = x + 1;

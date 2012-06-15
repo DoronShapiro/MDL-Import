@@ -8,6 +8,7 @@ for red, green and blue respectively
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <float.h>
 
 #include "ml6.h"
 #include "display.h"
@@ -58,6 +59,12 @@ color change_color( int i ) {
   return c;
 }
 
+double get_current_z(screen s, int x, int y){
+    int newy = YRES - 1 - y;
+    if ( x >= 0 && x < XRES && newy >=0 && newy < YRES )
+      return s[x][newy].z;
+}
+
 /*======== void plot() ==========
 Inputs:   screen s
          color c
@@ -96,6 +103,7 @@ void clear_screen( screen s ) {
   c.red = 0;
   c.green = 0;
   c.blue = 0;
+  c.z = -DBL_MAX;
 
   for ( y=0; y < YRES; y++ )
     for ( x=0; x < XRES; x++)      
