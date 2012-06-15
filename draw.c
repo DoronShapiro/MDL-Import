@@ -956,7 +956,7 @@ void draw_line(int x0, int y0, double z0, int x1, int y1, double z1, screen s, c
 
     x = x0;
     y = y0;
-
+    
     //swap points so we're always draing left to right
     if ( x0 > x1 ) {
         x = x1;
@@ -1015,7 +1015,7 @@ void draw_line(int x0, int y0, double z0, int x1, int y1, double z1, screen s, c
 
         //slope > -1: Octant 8 (4)
         //NOTE: z-interpolation happens here
-        if ( dx > abs(dy) ) {
+        if ( dx > abs(dy) || dy == 0) {
 
             z = z0;
             d = dy + ( dx / 2 );
@@ -1024,6 +1024,9 @@ void draw_line(int x0, int y0, double z0, int x1, int y1, double z1, screen s, c
             while ( x <= x1 ) {
 
                 if(z > get_current_z(s, x, y)){
+                    c.blue = (int)(255 * z / 100);
+                    c.green = (int)(255 * z / 100);
+                    c.red = (int)(255 * z / 100);
                     c.z = z;
                     plot(s, c, x, y);
                 }
