@@ -1,3 +1,6 @@
+light f 1 1 1 1 1 1
+ambient 1 1 0
+camera 1 1 1 1 1 1
 frames 100
 basename orb
 push

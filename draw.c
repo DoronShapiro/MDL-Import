@@ -437,7 +437,7 @@ void draw_polygons( struct matrix *points, screen s, color c ,light_source l, do
             dzdx_TtM = z_t-z_m < 0.1 ? 0 : 1.0*(x_t - x_m) / (z_t - z_m);
             dzdx_TtB = z_t-z_b < 0.1 ? 0 : 1.0*(x_t - x_b) / (z_t - z_b);
             dzdx_MtB = z_m-z_b < 0.1 ? 0 : 1.0*(x_m - x_b) / (z_m - z_b);
-            printf("dzdx_topToMid is %f, topToBottom is %f, midToBottom is %f\n", dzdx_TtM, dzdx_TtB, dzdx_MtB);
+            /*printf("dzdx_topToMid is %f, topToBottom is %f, midToBottom is %f\n", dzdx_TtM, dzdx_TtB, dzdx_MtB);*/
 
             yy = y_t;
 
@@ -997,7 +997,6 @@ void draw_lines( struct matrix * points, screen s, color c) {
 
 
 void draw_line(int x0, int y0, double z0, int x1, int y1, double z1, screen s, color c) {
-    /*printf("Data is %f, %f, %f, %f, %f, %f\n", x0, y0, z0, x1, y1, z1);*/
 
     int x, y, d, dx, dy;
     double z;
@@ -1073,9 +1072,10 @@ void draw_line(int x0, int y0, double z0, int x1, int y1, double z1, screen s, c
 
             /*z = z0;*/
             d = dy + ( dx / 2 );
-            dzdx = (z1 - z0) / (double)(x1 - x0);
+            dzdx = x1-x0 < .1 ? 0 : (z1 - z0) / (double)(x1 - x0);
 
             while ( x <= x1 ) {
+                /*printf("z is %f, get_current_z is %f\n", z, get_current_z(s, x, y));*/
 
                 if(z >= get_current_z(s, x, y)){
                     /*c.blue = (int)(255 * z / 100);*/
