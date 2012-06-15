@@ -335,7 +335,7 @@ Call drawline in batches of 3s to create triangles.
 04/04/12 13:39:09
 jdyrlandweaver
 ====================*/
-void draw_polygons( struct matrix *points, screen s, color c ,light_source l) {
+void draw_polygons( struct matrix *points, screen s, color c ,light_source l, int *ambient) {
 
     int i, n, b;
     double x1, y1, z1, x2, y2, z2, x3, y3, z3;
@@ -352,7 +352,10 @@ void draw_polygons( struct matrix *points, screen s, color c ,light_source l) {
     for(i=0; i < points->lastcol - 2; i+=3) {
 
         if ( calculate_dot( points, i ) >= 0 ) {
-            c = change_color( n++ );
+            c.red = ambient[0] * 255;
+            c.green = ambient[1] * 255;
+            c.blue = ambient[2] * 255;
+            /*c = change_color( n++ );*/
 
             x1 = points->m[0][i];
             y1 = points->m[1][i];

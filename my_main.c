@@ -317,6 +317,7 @@ void my_main(int polygons) {
     screen t;
     color g;
     light_source l;
+    int ambient[3];
     char q;
     struct vary_node ** knobs;
     struct vary_node *vn;
@@ -360,7 +361,7 @@ void my_main(int polygons) {
                 case IMPORT:
                     import_mesh(tmp, op[i].op.import.filename);
                     matrix_mult(s->data[ s->top ], tmp);
-                    draw_polygons(tmp, t, g, l);
+                    draw_polygons(tmp, t, g, l, ambient);
                     tmp->lastcol = 0;
                     break;
                 case SET:
@@ -384,6 +385,9 @@ void my_main(int polygons) {
                             l.r, l.g, l.b, l.x, l.y, l.z);
                     break;
                 case AMBIENT:
+                    ambient[0] = op[i].op.ambient.c[0];
+                    ambient[1] = op[i].op.ambient.c[1];
+                    ambient[2] = op[i].op.ambient.c[2];
                     break;
 
                 case SPHERE:
@@ -394,7 +398,7 @@ void my_main(int polygons) {
                             step);
                     //apply the current top origin
                     matrix_mult(s->data[ s->top ], tmp);
-                    draw_polygons(tmp, t, g, l);
+                    draw_polygons(tmp, t, g, l, ambient);
                     tmp->lastcol = 0;
                     break;
 
@@ -406,7 +410,7 @@ void my_main(int polygons) {
                             op[i].op.torus.r1,
                             step);
                     matrix_mult(s->data[ s->top ], tmp);
-                    draw_polygons(tmp, t, g, l);
+                    draw_polygons(tmp, t, g, l, ambient);
                     tmp->lastcol = 0;
                     break;
 
@@ -418,7 +422,7 @@ void my_main(int polygons) {
                             op[i].op.box.d1[1],
                             op[i].op.box.d1[2]);
                     matrix_mult(s->data[ s->top ], tmp);
-                    draw_polygons(tmp, t, g, l);
+                    draw_polygons(tmp, t, g, l, ambient);
                     tmp->lastcol = 0;
                     break;
 
