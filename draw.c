@@ -1126,7 +1126,6 @@ void import_mesh(struct matrix * points, char* filename){
     FILE * f;
     
     if(!strcmp(&(filename[strlen(filename)-4]), ".obj") || !strcmp(&(filename[strlen(filename)-4]), ".OBJ")){
-        printf("its an obj\n");
         f = fopen(filename, "r");
         if(f == NULL)
             printf("Error opening %s: %s\n",filename, strerror(errno));

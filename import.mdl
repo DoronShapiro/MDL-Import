@@ -1,11 +1,25 @@
 light f 1 1 1 1 1 1
 ambient 1 1 0
 camera 1 1 1 1 1 1
+frames 100
+basename lego
 push
-move 250 200 0
-//rotate x 20
-//rotate y 20
+move 250 250 0
+rotate y 360 knobby
+rotate x 360 k2
+scale 2 2 2 bigenator
+sphere 0 0 0 150
+vary knobby 0 99 1 0
+vary k2 0 99 0 1
+vary bigenator 0 49 0 1
+vary bigenator 50 99 1 0
+move 250 200 0 dripto
+rotate x 360 knobby
+rotate y 360 knoobby
 scale 200 200 200
 import test.obj
-display
-save lego.png
+vary knobby 0 49 1 0
+vary knoobby 0 49 0 1
+vary dripto 0 49 0 1
+//display
+//save lego.png
