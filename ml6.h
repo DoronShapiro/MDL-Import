@@ -28,12 +28,12 @@ struct point_t {
 } point_t;
 
 struct light_v {
-    int r;
-    int g;
-    int b;
-    int x;
-    int y;
-    int z;
+    double r;
+    double g;
+    double b;
+    double x;
+    double y;
+    double z;
 } light_v;
 typedef struct light_v light_source;
 

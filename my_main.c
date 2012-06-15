@@ -360,7 +360,7 @@ void my_main(int polygons) {
                 case IMPORT:
                     import_mesh(tmp, op[i].op.import.filename);
                     matrix_mult(s->data[ s->top ], tmp);
-                    draw_polygons(tmp, t, g);
+                    draw_polygons(tmp, t, g, l);
                     tmp->lastcol = 0;
                     break;
                 case SET:
@@ -374,6 +374,14 @@ void my_main(int polygons) {
                             symtab[j].s.value = op[i].op.setknobs.value;
                     break;
                 case LIGHT:
+                    l.r =symtab[j].s.l->c[0]; 
+                    l.g =symtab[j].s.l->c[1];
+                    l.b =symtab[j].s.l->c[2];
+                    l.x =symtab[j].s.l->l[0];
+                    l.y =symtab[j].s.l->l[1];
+                    l.z =symtab[j].s.l->l[2];
+                    printf("LIGHT: %f\t%f\t%f\t%f\t%f\t%f\n",
+                            l.r, l.g, l.b, l.x, l.y, l.z);
                     break;
                 case AMBIENT:
                     break;
@@ -386,7 +394,7 @@ void my_main(int polygons) {
                             step);
                     //apply the current top origin
                     matrix_mult(s->data[ s->top ], tmp);
-                    draw_polygons(tmp, t, g);
+                    draw_polygons(tmp, t, g, l);
                     tmp->lastcol = 0;
                     break;
 
@@ -398,7 +406,7 @@ void my_main(int polygons) {
                             op[i].op.torus.r1,
                             step);
                     matrix_mult(s->data[ s->top ], tmp);
-                    draw_polygons(tmp, t, g);
+                    draw_polygons(tmp, t, g, l);
                     tmp->lastcol = 0;
                     break;
 
@@ -410,7 +418,7 @@ void my_main(int polygons) {
                             op[i].op.box.d1[1],
                             op[i].op.box.d1[2]);
                     matrix_mult(s->data[ s->top ], tmp);
-                    draw_polygons(tmp, t, g);
+                    draw_polygons(tmp, t, g, l);
                     tmp->lastcol = 0;
                     break;
 

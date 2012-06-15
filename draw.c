@@ -335,12 +335,14 @@ Call drawline in batches of 3s to create triangles.
 04/04/12 13:39:09
 jdyrlandweaver
 ====================*/
-void draw_polygons( struct matrix *points, screen s, color c ) {
+void draw_polygons( struct matrix *points, screen s, color c ,light_source l) {
 
     int i, n, b;
     double x1, y1, z1, x2, y2, z2, x3, y3, z3;
     double x_t, x_m, x_b, y_t, y_m, y_b, z_t, z_m, z_b;
     n = 0;
+    printf("light data:%f\t%f\t%f\t%f\t%f\t%f\n", l.r, l.g, l.b,
+            l.x, l.y, l.z);
 
     if ( points->lastcol < 3 ) {
         printf("Need at least 3 points to draw a polygon\n");
