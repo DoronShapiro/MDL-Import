@@ -317,7 +317,7 @@ void my_main(int polygons) {
     screen t;
     color g;
     light_source l;
-    int ambient[3];
+    double ambient[3];
     char q;
     struct vary_node ** knobs;
     struct vary_node *vn;
@@ -329,6 +329,8 @@ void my_main(int polygons) {
     g.red = 0;
     g.green = 255;
     g.blue = 255;
+    ambient[0] = ambient[1] = ambient[2] = -1;
+    l.r = l.g = l.b = l.x = l.y = l.z = -1;
 
     first_pass();
 
