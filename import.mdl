@@ -1,3 +1,5 @@
+light f  1 1 1 100 100 100
+ambient 1 1 1
 push
 move 250 200 0
 rotate x 20

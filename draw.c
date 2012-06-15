@@ -354,15 +354,6 @@ void draw_polygons( struct matrix *points, screen s, color c ,light_source l, do
     for(i=0; i < points->lastcol - 2; i+=3) {
 
         if ( calculate_dot( points, i ) >= 0 ) {
-            if (ambient[0] >=0) {
-                c.red = k * ambient[0] * 255;
-                c.green = k * ambient[1] * 255;
-                c.blue = k * ambient[2] * 255;
-           }
-           else {
-                c = change_color( n++ );
-           }
-           printf("calculate_dot says %f\n", calculate_dot(points, i));
 
             x1 = points->m[0][i];
             y1 = points->m[1][i];
@@ -373,10 +364,35 @@ void draw_polygons( struct matrix *points, screen s, color c ,light_source l, do
             x3 = points->m[0][i+2];
             y3 = points->m[1][i+2];
             z3 = points->m[2][i+2];
+
+            double *normal;
+            double mag;
+            normal = calculate_normal(x1, y1, z1, x2, y2, z2);
+            mag = sqrt((normal[0] * normal[0])
+                    + (normal[1] * normal[1])
+                    + (normal[2] * normal[2]));
+            normal[0] /= mag;
+            normal[1] /= mag;
+            normal[2] /= mag;
+
+            double dot_prod = l.x * normal[0]
+                + l.y * normal[1]
+                + l.z * normal[2];
+
+            if (ambient[0] >=0) {
+                c.red = (k * ambient[0] * 255/3) + (k * l.r * dot_prod * 255/3) + (255/3);
+                c.green = k * ambient[1] * 255;
+                c.blue = k * ambient[2] * 255;
+           }
+           else {
+                c = change_color( n++ );
+           }
+
+            printf("calculate_normal says %f\t%f\t%f\n",normal[0], normal[1], normal[2]);
+
             y_b = y1 > y2 ? (y1 > y3 ? y1 : y3) : (y2 > y3 ? y2 : y3);
             y_t = y1 > y2 ? (y2 > y3 ? y3 : y2) : (y1 > y3 ? y3 : y1);
             y_m = y1 > y2 ? (y2 > y3 ? y2 : (y1 > y3 ? y3:y1)):(y1 > y3 ? y1 : (y2 > y3 ? y3 : y2));
-            printf("YT %f\tYB%f\tYM%f\n", y_t, y_b, y_m);
 
             x_b = y1 > y2 ? (y1 > y3 ? x1 : x3) : (y2 > y3 ? x2 : x3);
             x_t = y1 > y2 ? (y2 > y3 ? x3 : x2) : (y1 > y3 ? x3 : x1);
