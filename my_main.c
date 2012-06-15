@@ -505,10 +505,11 @@ void my_main(int polygons) {
         free_stack(s);
         free_matrix(tmp);
         //free_matrix( transform );
-
-        sprintf(frame_name, "animations/%s%03d.png", name, f);
-        //printf("saving %s...\n",frame_name);
-        save_extension(t, frame_name);
+        if(num_frames > 1){
+                sprintf(frame_name, "animations/%s%03d.png", name, f);
+                //printf("saving %s...\n",frame_name);
+                save_extension(t, frame_name);
+        }
     }
     if (num_frames > 1) {
         printf("\n");
