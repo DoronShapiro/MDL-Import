@@ -367,7 +367,7 @@ void draw_polygons( struct matrix *points, screen s, color c ,light_source l, do
 
             double *normal;
             double mag;
-            normal = calculate_normal(x1, y1, z1, x2, y2, z2);
+            normal = calculate_normal(x2-x1, y2-y1, z2-z1, x3-x2, y3-y2, z3-z2);
             mag = sqrt((normal[0] * normal[0])
                     + (normal[1] * normal[1])
                     + (normal[2] * normal[2]));
@@ -375,14 +375,24 @@ void draw_polygons( struct matrix *points, screen s, color c ,light_source l, do
             normal[1] /= mag;
             normal[2] /= mag;
 
-            double dot_prod = l.x * normal[0]
-                + l.y * normal[1]
-                + l.z * normal[2];
+            printf("l.x is %f\t l.y is %f\t l.z is %f\n", l.x, l.y, l.z);
+            double normal_x, normal_y, normal_z;
+            double othermag;
+            othermag = sqrt((l.x*l.x) + (l.y*l.y) + (l.z*l.z));
+            normal_x = l.x / othermag;
+            normal_y = l.y / othermag;
+            normal_z = l.z / othermag;
+            double dot_prod = normal_x * normal[0]
+                + normal_y * normal[1]
+                + normal_z * normal[2];
 
             if (ambient[0] >=0) {
+                printf("DERP\n");
                 c.red = (k * ambient[0] * 255/3) + (k * l.r * dot_prod * 255/3) + (255/3);
-                c.green = k * ambient[1] * 255;
-                c.blue = k * ambient[2] * 255;
+                c.green = k*ambient[1] * (255/3)+ (k * l.g * dot_prod * 255/3) + (255/3);
+                c.blue = k*ambient[2] * (255/3)+ (k * l.b * dot_prod * 255/3) + (255/3);
+                /*c.green = (k * ambient[1] * 255/3) + (k * l.g * dot_prod * 255/3) + (255/3);*/
+                /*c.blue = (k * ambient[2] * 255/3) + (k * l.b * dot_prod * 255/3) + (255/3);*/
            }
            else {
                 c = change_color( n++ );
