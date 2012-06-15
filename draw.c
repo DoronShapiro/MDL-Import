@@ -3,6 +3,7 @@
 #include <math.h>
 #include <string.h>
 #include <errno.h>
+#include <float.h>
 
 #include "ml6.h"
 #include "display.h"
@@ -386,6 +387,9 @@ void draw_polygons( struct matrix *points, screen s, color c ) {
                 dzdx_TtM = (x_t - x_m) / (z_t - z_m);
                 dzdx_TtB = (x_t - x_b) / (z_t - z_b);
                 dzdx_MtB = (x_m - x_b) / (z_m - z_b);
+                
+               // if(abs(m_topToMid) > abs(x_t - x_m))  //will this help get rid of those random lines?
+                //    m_topToMid = x_t - x_m;
                 
                 yy = y_t;
 
