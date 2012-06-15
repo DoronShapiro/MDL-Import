@@ -346,8 +346,6 @@ void draw_polygons( struct matrix *points, screen s, color c ,light_source l, do
     n = 0;
     k = 1;
     specexp = 1;
-    printf("light data:%f\t%f\t%f\t%f\t%f\t%f\n", l.r, l.g, l.b,
-            l.x, l.y, l.z);
 
     if ( points->lastcol < 3 ) {
         printf("Need at least 3 points to draw a polygon\n");
@@ -378,7 +376,6 @@ void draw_polygons( struct matrix *points, screen s, color c ,light_source l, do
             normal[1] /= mag;
             normal[2] /= mag;
 
-            printf("l.x is %f\t l.y is %f\t l.z is %f\n", l.x, l.y, l.z);
             double normal_x, normal_y, normal_z;
             double othermag;
             othermag = sqrt((l.x*l.x) + (l.y*l.y) + (l.z*l.z));
@@ -406,7 +403,6 @@ void draw_polygons( struct matrix *points, screen s, color c ,light_source l, do
 	    double spec_dot_prod = normal_spec_x * normal_view_x + normal_spec_y * normal_view_y + normal_spec_z * normal_view_z;
 
             if (ambient[0] >=0 && camera[0] >=0) {
-                printf("DERP\n");
                 c.red = (k * ambient[0] * 255/3) + (k * l.r * dot_prod * 255/3) + (k * l.r * pow(spec_dot_prod, specexp) * 255/3);
                 c.green = k*ambient[1] * (255/3)+ (k * l.g * dot_prod * 255/3) + (k * l.g * pow(spec_dot_prod, specexp) * 255/3);
                 c.blue = k*ambient[2] * (255/3)+ (k * l.b * dot_prod * 255/3) + (k * l.b * pow(spec_dot_prod, specexp) * 255/3);
@@ -416,8 +412,6 @@ void draw_polygons( struct matrix *points, screen s, color c ,light_source l, do
            else {
                 c = change_color( n++ );
            }
-
-            printf("calculate_normal says %f\t%f\t%f\n",normal[0], normal[1], normal[2]);
 
             y_b = y1 > y2 ? (y1 > y3 ? y1 : y3) : (y2 > y3 ? y2 : y3);
             y_t = y1 > y2 ? (y2 > y3 ? y3 : y2) : (y1 > y3 ? y3 : y1);
@@ -440,13 +434,15 @@ void draw_polygons( struct matrix *points, screen s, color c ,light_source l, do
             m_topToMid = 1.0*(x_t - x_m) / (y_t - y_m);
             m_topToBottom = 1.0*(x_t - x_b) / (y_t - y_b);
             m_midToBottom = 1.0*(x_m - x_b) / (y_m - y_b);
-            dzdx_TtM = 1.0*(x_t - x_m) / (z_t - z_m);
-            dzdx_TtB = 1.0*(x_t - x_b) / (z_t - z_b);
-            dzdx_MtB = 1.0*(x_m - x_b) / (z_m - z_b);
+            dzdx_TtM = z_t-z_m < 0.1 ? 0 : 1.0*(x_t - x_m) / (z_t - z_m);
+            dzdx_TtB = z_t-z_b < 0.1 ? 0 : 1.0*(x_t - x_b) / (z_t - z_b);
+            dzdx_MtB = z_m-z_b < 0.1 ? 0 : 1.0*(x_m - x_b) / (z_m - z_b);
+            printf("dzdx_topToMid is %f, topToBottom is %f, midToBottom is %f\n", dzdx_TtM, dzdx_TtB, dzdx_MtB);
 
             yy = y_t;
 
             while (yy < y_m) {
+                /*printf("Data to be read: %d\t%d\t%f\t%d\t%d\t%f\n", (int)xleft, (int)yy, zleft, (int)xright, (int)yy, zright);*/
                 draw_line((int)xleft, (int)yy, zleft, (int)xright, (int)yy, zright, s, c);
                 xleft += m_topToMid;
                 xright += m_topToBottom;
@@ -920,10 +916,6 @@ void add_curve( struct matrix *points,
         ycoefs = generate_curve_coefs(y0, y1, y2, y3, HERMITE_MODE);
     }
 
-    /*
-       printf("a = %lf b = %lf c = %lf d = %lf\n", xcoefs->m[0][0],
-       xcoefs->m[1][0], xcoefs->m[2][0], xcoefs->m[3][0]);
-       */
 
     for (t=step; t <= 1; t+= step) {
 
@@ -1005,24 +997,31 @@ void draw_lines( struct matrix * points, screen s, color c) {
 
 
 void draw_line(int x0, int y0, double z0, int x1, int y1, double z1, screen s, color c) {
+    /*printf("Data is %f, %f, %f, %f, %f, %f\n", x0, y0, z0, x1, y1, z1);*/
 
     int x, y, d, dx, dy;
     double z;
     double dzdx;
     x = x0;
     y = y0;
+    z = z0;
 
     //swap points so we're always draing left to right
     if ( x0 > x1 ) {
         x = x1;
         y = y1;
+        z = z1;
         x1 = x0;
         y1 = y0;
+        z1 = z0;
     }
 
     //need to know dx and dy for this version
     dx = (x1 - x) * 2;
     dy = (y1 - y) * 2;
+    if (dy != 0) {
+        printf("not a horizontal line!\n");
+    }
 
     //positive slope: Octants 1, 2 (5 and 6)
     if ( dy > 0 ) {
@@ -1072,20 +1071,23 @@ void draw_line(int x0, int y0, double z0, int x1, int y1, double z1, screen s, c
         //NOTE: z-interpolation happens here
         if ( dx > abs(dy) || dy == 0) {
 
-            z = z0;
+            /*z = z0;*/
             d = dy + ( dx / 2 );
-            dzdx = (z1 - z0) / (x1 - x0);
-            
+            dzdx = (z1 - z0) / (double)(x1 - x0);
+
             while ( x <= x1 ) {
 
-                if(z > get_current_z(s, x, y)){
-  		    c.blue = (int)(255 * z / 100);
-                    c.green = (int)(255 * z / 100);
-                    c.red = (int)(255 * z / 100);
+                if(z >= get_current_z(s, x, y)){
+                    /*c.blue = (int)(255 * z / 100);*/
+                    /*c.green = (int)(255 * z / 100);*/
+                    /*c.red = (int)(255 * z / 100);*/
+                    /*c.red = 225;*/
+                    /*c.green = 0;*/
+                    /*c.blue = 0;*/
                     c.z = z;
                     plot(s, c, x, y);
                 }
-		z += dzdx;
+                z += dzdx;
                 if ( d > 0 ) {
                     x = x + 1;
                     d = d + dy;

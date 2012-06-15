@@ -384,8 +384,6 @@ void my_main(int polygons) {
                     l.x =symtab[j].s.l->l[0];
                     l.y =symtab[j].s.l->l[1];
                     l.z =symtab[j].s.l->l[2];
-                    printf("LIGHT: %f\t%f\t%f\t%f\t%f\t%f\n",
-                            l.r, l.g, l.b, l.x, l.y, l.z);
                     break;
                 case AMBIENT:
                     ambient[0] = op[i].op.ambient.c[0];
